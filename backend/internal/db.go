@@ -11,7 +11,7 @@ import (
 func NewDBPool(ctx context.Context) (*pgxpool.Pool, error) {
 	dsn := os.Getenv("DATABASE_URL")
 	if dsn == "" {
-		dsn = "postgres://postgres:admin@localhost:5432/stockflow_db?sslmode=disable"
+		dsn = "postgres://postgres:postgres@localhost:5432/stockflow_db?sslmode=disable"
 	}
 
 	pool, err := pgxpool.New(ctx, dsn)
