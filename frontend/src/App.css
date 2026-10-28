@@ -362,7 +362,9 @@ tr:hover {
   margin-bottom: 8px;
 }
 
-.order-item-row input {
+.order-item-row input,
+.order-item-row select {
+  background: white;
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -370,6 +372,7 @@ tr:hover {
   outline: none;
 }
 
+.order-item-row select:first-child,
 .order-item-row input:first-child {
   flex: 2;
 }

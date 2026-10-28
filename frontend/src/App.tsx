@@ -32,24 +32,28 @@ function App() {
     setError("");
     try {
       const res: ProductListResponse = await getProducts(search, currentPage, 20);
-      let filtered = res.data;
-      if (filter === "active") filtered = filtered.filter((p) => p.is_active);
-      if (filter === "inactive") filtered = filtered.filter((p) => !p.is_active);
-      if (filter === "low") filtered = filtered.filter((p) => p.stock <= 10);
-      setProducts(filtered);
+      setProducts(res.data);
       setTotal(res.total);
     } catch (err: any) {
       setError(err.message || "Failed to load products");
     } finally {
       setLoading(false);
     }
-  }, [search, currentPage, filter]);
+  }, [search, currentPage]);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
-  // Summary data
+  // Client-side filter for display in table
+  const filteredProducts = products.filter((p) => {
+    if (filter === "active") return p.is_active;
+    if (filter === "inactive") return !p.is_active;
+    if (filter === "low") return p.stock <= 10;
+    return true;
+  });
+
+  // Summary data derived from server data (refreshed after mutations)
   const totalProducts = total;
   const activeProducts = products.filter((p) => p.is_active).length;
   const totalStockValue = products.reduce((sum, p) => sum + p.price * p.stock, 0);
@@ -112,7 +116,7 @@ function App() {
       {/* Page Content */}
       {page === "products" && (
         <ProductsPage
-          products={products}
+          products={filteredProducts}
           loading={loading}
           error={error}
           search={search}
@@ -129,6 +133,7 @@ function App() {
 
       {page === "create-order" && (
         <OrderForm
+          products={products}
           onSuccess={(orderId) => {
             setSelectedOrderId(orderId);
             setPage("order-detail");
