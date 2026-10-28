@@ -40,6 +40,16 @@ func main() {
 		w.Write([]byte("OK"))
 	})
 
+	// register handlers and routes
+	h := internal.NewHandler(pool)
+
+	r.Route("/api", func(r chi.Router) {
+		r.Get("/products", h.ListProducts)
+		r.Post("/products", h.CreateProduct)
+		r.Put("/products/{id}", h.UpdateProduct)
+		r.Delete("/products/{id}", h.DeleteProduct)
+	})
+
 	// start server
 	port := os.Getenv("PORT")
 	if port == "" {
