@@ -14,6 +14,7 @@ interface Props {
   total: number;
   onPageChange: (p: number) => void;
   onRefresh: () => void;
+  showSuccess: (msg: string) => void;
 }
 
 export default function ProductsPage({
@@ -28,6 +29,7 @@ export default function ProductsPage({
   total,
   onPageChange,
   onRefresh,
+  showSuccess,
 }: Props) {
   const [stockModal, setStockModal] = useState<Product | null>(null);
   const [searchInput, setSearchInput] = useState(search);
@@ -168,6 +170,7 @@ export default function ProductsPage({
           onSuccess={() => {
             setStockModal(null);
             onRefresh();
+            showSuccess(`Stock adjusted for ${stockModal.sku} successfully!`);
           }}
         />
       )}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { getProducts } from "./api";
 import type { Product, ProductListResponse } from "./types";
 import ProductsPage from "./ProductsPage";
@@ -18,6 +18,14 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showSuccess = (msg: string) => {
+    setSuccessMessage(msg);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setSuccessMessage(""), 3000);
+  };
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -52,6 +60,13 @@ function App() {
 
   return (
     <div className="app">
+      {/* Success Toast */}
+      {successMessage && (
+        <div className="toast toast-success" key={successMessage}>
+          ✅ {successMessage}
+        </div>
+      )}
+
       <div className="app-header">
         <h1>📦 StockFlow</h1>
       </div>
@@ -108,6 +123,7 @@ function App() {
           total={total}
           onPageChange={setCurrentPage}
           onRefresh={fetchProducts}
+          showSuccess={showSuccess}
         />
       )}
 
@@ -117,6 +133,7 @@ function App() {
             setSelectedOrderId(orderId);
             setPage("order-detail");
             fetchProducts();
+            showSuccess("Order created successfully!");
           }}
           onCancel={() => setPage("products")}
         />
