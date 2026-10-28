@@ -44,10 +44,16 @@ func main() {
 	h := internal.NewHandler(pool)
 
 	r.Route("/api", func(r chi.Router) {
+
+		// Products
 		r.Get("/products", h.ListProducts)
 		r.Post("/products", h.CreateProduct)
 		r.Put("/products/{id}", h.UpdateProduct)
 		r.Delete("/products/{id}", h.DeleteProduct)
+
+		// Stocks
+		r.Post("/products/{id}/stock", h.AdjustStock)
+		r.Get("/products/{id}/movements", h.GetMovements)
 	})
 
 	// start server
