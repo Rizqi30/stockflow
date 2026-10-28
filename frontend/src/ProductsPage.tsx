@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Loader2, PackageOpen, AlertCircle, RotateCw } from "lucide-react";
 import type { Product } from "./types";
 import StockModal from "./StockModal";
 
@@ -14,7 +15,7 @@ interface Props {
   total: number;
   onPageChange: (p: number) => void;
   onRefresh: () => void;
-  showSuccess: (msg: string) => void;
+  showSuccess?: (msg: string) => void;
 }
 
 export default function ProductsPage({
@@ -84,12 +85,35 @@ export default function ProductsPage({
           </div>
         </div>
 
-        {error && <div className="alert alert-error" style={{ margin: 16 }}>{error}</div>}
+        {/* Error state with retry */}
+        {error && (
+          <div className="alert alert-error" style={{ margin: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <AlertCircle size={18} />
+              <span>{error}</span>
+            </div>
+            <button className="btn btn-sm btn-outline" onClick={onRefresh} style={{ marginLeft: 12 }}>
+              <RotateCw size={14} /> Retry
+            </button>
+          </div>
+        )}
 
+        {/* Loading state with Lucide Spinner */}
         {loading ? (
-          <div className="loading">Loading products...</div>
-        ) : products.length === 0 ? (
-          <div className="empty-state">No products found</div>
+          <div className="loading">
+            <Loader2 className="spinner" size={36} />
+            <span>Loading products...</span>
+          </div>
+        ) : !error && products.length === 0 ? (
+          /* Empty state */
+          <div className="empty-state">
+            <PackageOpen size={48} color="#94a3b8" style={{ marginBottom: 12 }} />
+            <div style={{ fontWeight: 600, color: "#1e293b", fontSize: 16 }}>No products found</div>
+            <p style={{ fontSize: 13, marginTop: 4, color: "#64748b" }}>Try adjusting your search or filter</p>
+            <button className="btn btn-sm btn-outline" onClick={onRefresh} style={{ marginTop: 14 }}>
+              <RotateCw size={14} /> Refresh
+            </button>
+          </div>
         ) : (
           <table>
             <thead>
@@ -170,7 +194,9 @@ export default function ProductsPage({
           onSuccess={() => {
             setStockModal(null);
             onRefresh();
-            showSuccess(`Stock adjusted for ${stockModal.sku} successfully!`);
+            if (showSuccess) {
+              showSuccess(`Stock adjusted for ${stockModal.sku} successfully!`);
+            }
           }}
         />
       )}

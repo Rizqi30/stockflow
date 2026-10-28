@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Loader2, AlertCircle } from "lucide-react";
 import { getOrder, cancelOrder } from "./api";
 import type { SalesOrder } from "./types";
 
@@ -44,8 +45,24 @@ export default function OrderDetail({ orderId, onBack }: Props) {
 
   const formatRupiah = (n: number) => "Rp " + n.toLocaleString("id-ID");
 
-  if (loading) return <div className="loading">Loading order...</div>;
-  if (error) return <div className="alert alert-error">{error}</div>;
+  if (loading) {
+    return (
+      <div className="loading">
+        <Loader2 className="spinner" size={36} />
+        <span>Loading order...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="alert alert-error" style={{ margin: 20 }}>
+        <AlertCircle size={18} />
+        <span>{error}</span>
+      </div>
+    );
+  }
+
   if (!order) return null;
 
   return (
