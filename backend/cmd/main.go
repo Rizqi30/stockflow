@@ -54,6 +54,11 @@ func main() {
 		// Stocks
 		r.Post("/products/{id}/stock", h.AdjustStock)
 		r.Get("/products/{id}/movements", h.GetMovements)
+
+		// Orders
+		r.Post("/orders", h.CreateOrder)
+		r.Get("/orders/{id}", h.GetOrder)
+		r.Post("/orders/{id}/cancel", h.CancelOrder)
 	})
 
 	// start server
